@@ -1,0 +1,36 @@
+name: Weekly PubMed Update
+
+on:
+  schedule:
+    - cron: '0 12 * * 0'
+
+  workflow_dispatch:
+
+jobs:
+  update-site:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install requests
+        run: pip install requests
+
+      - name: Run PubMed updater
+        run: python app.py
+
+      - name: Commit updated website
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add index.html
+          git commit -m "Automatic weekly update" || echo "No changes"
+
+      - name: Push changes
+        run: git push
