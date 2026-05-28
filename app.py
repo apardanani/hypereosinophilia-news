@@ -31,186 +31,84 @@ def contains_any(text, keywords):
     return False
 
 
+def category_to_id(category):
+    return (
+        category.lower()
+        .replace(" / ", "-")
+        .replace(" ", "-")
+        .replace("&", "and")
+        .replace(",", "")
+    )
+
+
 def assign_disease_category(title, abstract):
     text = f"{title} {abstract}".lower()
 
     categories = [
-        (
-            "EGPA / Churg-Strauss / Vasculitis",
-            [
-                "egpa",
-                "anca",
-                "vasculitis",
-                "churg-strauss",
-                "churg strauss",
-                "eosinophilic granulomatosis with polyangiitis",
-                "anca-associated vasculitis",
-                "polyangiitis",
-            ],
-        ),
-        (
-            "Infectious / Parasitic Eosinophilia",
-            [
-                "strongyloides",
-                "strongyloidiasis",
-                "toxocara",
-                "toxocariasis",
-                "paragonimus",
-                "paragonimiasis",
-                "ancylostoma",
-                "ankylostomiasis",
-                "hookworm",
-                "helminth",
-                "helminthic",
-                "schistosomiasis",
-                "schistosoma",
-                "fasciola",
-                "fascioliasis",
-                "trichinella",
-                "trichinellosis",
-                "ascaris",
-                "ascariasis",
-                "filariasis",
-                "loiasis",
-                "toxoplasma",
-                "toxoplasmosis",
-                "strongyloides stercoralis",
-                "parasitic eosinophilia",
-                "tropical eosinophilia",
-                "coccidioidomycosis",
-                "histoplasmosis",
-                "aspergillosis",
-                "ebv",
-                "epstein-barr virus",
-                "ebstein-barr virus",
-                "covid-19",
-                "sars-cov-2",
-            ],
-        ),
-        (
-            "Eosinophilic Leukemia / Hematologic Neoplasms",
-            [
-                "eosinophilic leukemia",
-                "chronic eosinophilic leukemia",
-                "pdgfra",
-                "pdgfrb",
-                "fgfr1",
-                "pcm1-jak2",
-                "myeloid/lymphoid",
-                "myeloid lymphoid",
-                "systemic mastocytosis",
-            ],
-        ),
-        (
-            "Hypereosinophilic Syndrome / Hypereosinophilia",
-            [
-                "hypereosinophilic syndrome",
-                "hypereosinophilia",
-                "hypereosinophilic",
-                "idiopathic hypereosinophilic",
-            ],
-        ),
-        (
-            "Asthma / Airway Disease",
-            [
-                "asthma",
-                "eosinophilic asthma",
-                "severe asthma",
-                "airway eosinophilia",
-                "airway inflammation",
-            ],
-        ),
-        (
-            "Chronic Rhinosinusitis / Nasal Polyps",
-            [
-                "chronic rhinosinusitis",
-                "rhinosinusitis",
-                "nasal polyp",
-                "nasal polyps",
-                "crswnp",
-                "eosinophilic chronic rhinosinusitis",
-            ],
-        ),
-        (
-            "Pulmonary Eosinophilic Disorders",
-            [
-                "pulmonary eosinophilia",
-                "eosinophilic pneumonia",
-                "abpa",
-                "allergic bronchopulmonary aspergillosis",
-                "lung eosinophilia",
-            ],
-        ),
-        (
-            "Eosinophilic Esophagitis",
-            [
-                "eosinophilic esophagitis",
-                "eosinophilic oesophagitis",
-                "eoe",
-            ],
-        ),
-        (
-            "Eosinophilic Gastrointestinal Disease",
-            [
-                "eosinophilic gastritis",
-                "eosinophilic gastroenteritis",
-                "eosinophilic colitis",
-                "eosinophilic gastrointestinal",
-                "egid",
-            ],
-        ),
-        (
-            "DRESS / Drug Hypersensitivity",
-            [
-                "dress",
-                "drug reaction",
-                "drug reaction with eosinophilia",
-                "drug reaction with eosinophilia and systemic symptoms",
-                "drug hypersensitivity",
-                "drug-induced eosinophilia",
-                "drug induced eosinophilia",
-                "rash",
-                "exanthema",
-                "cutaneous adverse reaction",
-                "severe cutaneous adverse reaction",
-                "scar",
-            ],
-        ),
-        (
-            "Dermatologic Eosinophilic Disorders",
-            [
-                "atopic dermatitis",
-                "wells syndrome",
-                "eosinophilic cellulitis",
-                "eosinophilic dermatosis",
-                "skin eosinophilia",
-            ],
-        ),
-        (
-            "Pediatric Eosinophilic Disorders",
-            [
-                "pediatric",
-                "paediatric",
-                "children",
-                "childhood",
-                "infant",
-            ],
-        ),
-        (
-            "Basic Science / Translational Eosinophil Biology",
-            [
-                "il-5",
-                "interleukin-5",
-                "eosinophil activation",
-                "cytokine",
-                "pathogenesis",
-                "pathophysiology",
-                "signaling",
-                "molecular",
-                "transcriptomic",
-                "genomic",
-            ],
-        ),
+        ("EGPA / Churg-Strauss / Vasculitis", [
+            "egpa", "anca", "vasculitis", "churg-strauss", "churg strauss",
+            "eosinophilic granulomatosis with polyangiitis",
+            "anca-associated vasculitis", "polyangiitis",
+        ]),
+        ("Infectious / Parasitic Eosinophilia", [
+            "strongyloides", "strongyloidiasis", "toxocara", "toxocariasis",
+            "paragonimus", "paragonimiasis", "ancylostoma", "ankylostomiasis",
+            "hookworm", "helminth", "helminthic", "schistosomiasis",
+            "schistosoma", "fasciola", "fascioliasis", "trichinella",
+            "trichinellosis", "ascaris", "ascariasis", "filariasis",
+            "loiasis", "toxoplasma", "toxoplasmosis", "parasitic eosinophilia",
+            "tropical eosinophilia", "coccidioidomycosis", "histoplasmosis",
+            "aspergillosis", "ebv", "epstein-barr virus", "ebstein-barr virus",
+            "covid-19", "sars-cov-2",
+        ]),
+        ("Eosinophilic Leukemia / Hematologic Neoplasms", [
+            "eosinophilic leukemia", "chronic eosinophilic leukemia",
+            "pdgfra", "pdgfrb", "fgfr1", "pcm1-jak2",
+            "myeloid/lymphoid", "myeloid lymphoid", "systemic mastocytosis",
+        ]),
+        ("Hypereosinophilic Syndrome / Hypereosinophilia", [
+            "hypereosinophilic syndrome", "hypereosinophilia",
+            "hypereosinophilic", "idiopathic hypereosinophilic",
+        ]),
+        ("Asthma / Airway Disease", [
+            "asthma", "eosinophilic asthma", "severe asthma",
+            "airway eosinophilia", "airway inflammation",
+        ]),
+        ("Chronic Rhinosinusitis / Nasal Polyps", [
+            "chronic rhinosinusitis", "rhinosinusitis", "nasal polyp",
+            "nasal polyps", "crswnp", "eosinophilic chronic rhinosinusitis",
+        ]),
+        ("Pulmonary Eosinophilic Disorders", [
+            "pulmonary eosinophilia", "eosinophilic pneumonia", "abpa",
+            "allergic bronchopulmonary aspergillosis", "lung eosinophilia",
+        ]),
+        ("Eosinophilic Esophagitis", [
+            "eosinophilic esophagitis", "eosinophilic oesophagitis", "eoe",
+        ]),
+        ("Eosinophilic Gastrointestinal Disease", [
+            "eosinophilic gastritis", "eosinophilic gastroenteritis",
+            "eosinophilic colitis", "eosinophilic gastrointestinal", "egid",
+        ]),
+        ("DRESS / Drug Hypersensitivity", [
+            "dress", "drug reaction", "drug reaction with eosinophilia",
+            "drug reaction with eosinophilia and systemic symptoms",
+            "drug hypersensitivity", "drug-induced eosinophilia",
+            "drug induced eosinophilia", "rash", "exanthema",
+            "cutaneous adverse reaction", "severe cutaneous adverse reaction",
+            "scar",
+        ]),
+        ("Dermatologic Eosinophilic Disorders", [
+            "atopic dermatitis", "wells syndrome", "eosinophilic cellulitis",
+            "eosinophilic dermatosis", "skin eosinophilia",
+        ]),
+        ("Pediatric Eosinophilic Disorders", [
+            "pediatric", "paediatric", "children", "childhood", "infant",
+        ]),
+        ("Basic Science / Translational Eosinophil Biology", [
+            "il-5", "interleukin-5", "eosinophil activation", "cytokine",
+            "pathogenesis", "pathophysiology", "signaling", "molecular",
+            "transcriptomic", "genomic",
+        ]),
     ]
 
     for category_name, keywords in categories:
@@ -283,18 +181,16 @@ if pmids:
         journal_score = journal_scores.get(journal.lower(), 0)
         disease_category = assign_disease_category(title, abstract)
 
-        articles.append(
-            {
-                "title": title,
-                "journal": journal,
-                "publication_date": publication_date,
-                "pmid": pmid,
-                "link": link,
-                "abstract": short_abstract,
-                "journal_score": journal_score,
-                "disease_category": disease_category,
-            }
-        )
+        articles.append({
+            "title": title,
+            "journal": journal,
+            "publication_date": publication_date,
+            "pmid": pmid,
+            "link": link,
+            "abstract": short_abstract,
+            "journal_score": journal_score,
+            "disease_category": disease_category,
+        })
 
 
 category_order = [
@@ -317,7 +213,25 @@ category_order = [
 articles_html = ""
 
 if articles:
+    articles_html += "<h2>Topics</h2><ul>"
+
+    for category in category_order:
+        category_articles = [
+            article for article in articles
+            if article["disease_category"] == category
+        ]
+
+        if category_articles:
+            category_id = category_to_id(category)
+            articles_html += f"""
+            <li>
+                <a href="#{category_id}">{category}</a>
+                ({len(category_articles)})
+            </li>
+            """
+
     articles_html += """
+    </ul>
     <p>
     Articles are grouped by disease area. Within each disease area,
     articles are sorted by journal score, highest first.
@@ -330,13 +244,14 @@ if articles:
             if article["disease_category"] == category
         ]
 
-        category_articles.sort(
-            key=lambda x: x["journal_score"],
-            reverse=True
-        )
+        category_articles.sort(key=lambda x: x["journal_score"], reverse=True)
 
         if category_articles:
-            articles_html += f"<h2>{category}</h2>"
+            category_id = category_to_id(category)
+            articles_html += f"""
+            <h2 id="{category_id}">{category}</h2>
+            <p><a href="#top">Back to top</a></p>
+            """
 
             for item in category_articles:
                 articles_html += make_article_html(item)
@@ -350,7 +265,7 @@ html = f"""
 <head>
     <title>Hypereosinophilia Research Updates</title>
 </head>
-<body>
+<body id="top">
     <h1>Hypereosinophilia Research Updates</h1>
     <p>Updated: {date.today()}</p>
     <p>Total citations found in prior 30 days: {total_found}</p>
