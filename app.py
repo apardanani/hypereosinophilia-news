@@ -3,6 +3,7 @@ import requests
 from xml.etree import ElementTree
 from datetime import date
 
+
 def load_journal_scores():
     scores = {}
 
@@ -21,42 +22,159 @@ def load_journal_scores():
     return scores
 
 
-def classify_article(title, abstract):
+def assign_disease_category(title, abstract):
     text = f"{title} {abstract}".lower()
 
-    clinical_keywords = [
-        "treatment", "therapy", "therapeutic", "management", "guideline",
-        "recommendation", "case report", "case series", "clinical trial",
-        "phase 1", "phase 2", "phase 3", "prognosis", "prognostic",
-        "risk stratification", "risk factor", "diagnosis", "diagnostic",
-        "outcome", "survival", "response", "relapse", "refractory",
-        "mepolizumab", "benralizumab", "imatinib", "corticosteroid",
-        "steroid", "anti-il-5", "anti-interleukin-5"
+    categories = [
+        (
+            "Hypereosinophilic Syndrome / Hypereosinophilia",
+            [
+                "hypereosinophilic syndrome",
+                "hypereosinophilia",
+                "hypereosinophilic",
+                "idiopathic hypereosinophilic",
+                "hes",
+            ],
+        ),
+        (
+            "Eosinophilic Leukemia / Hematologic Neoplasms",
+            [
+                "eosinophilic leukemia",
+                "chronic eosinophilic leukemia",
+                "cel",
+                "myeloid/lymphoid neoplasm",
+                "pdgfra",
+                "pdgfrb",
+                "fgfr1",
+                "pcm1-jak2",
+                "systemic mastocytosis",
+            ],
+        ),
+        (
+            "EGPA / Churg-Strauss / Vasculitis",
+            [
+                "eosinophilic granulomatosis with polyangiitis",
+                "egpa",
+                "churg-strauss",
+                "churg strauss",
+                "vasculitis",
+                "anca",
+            ],
+        ),
+        (
+            "Asthma / Airway Disease",
+            [
+                "asthma",
+                "eosinophilic asthma",
+                "severe asthma",
+                "airway eosinophilia",
+                "airway inflammation",
+            ],
+        ),
+        (
+            "Chronic Rhinosinusitis / Nasal Polyps",
+            [
+                "chronic rhinosinusitis",
+                "rhinosinusitis",
+                "nasal polyp",
+                "nasal polyps",
+                "crsw NP".lower(),
+                "crswnp",
+                "eosinophilic chronic rhinosinusitis",
+            ],
+        ),
+        (
+            "Pulmonary Eosinophilic Disorders",
+            [
+                "pulmonary eosinophilia",
+                "eosinophilic pneumonia",
+                "allergic bronchopulmonary aspergillosis",
+                "abpa",
+                "lung eosinophilia",
+            ],
+        ),
+        (
+            "Eosinophilic Esophagitis",
+            [
+                "eosinophilic esophagitis",
+                "eosinophilic oesophagitis",
+                "eoe",
+            ],
+        ),
+        (
+            "Eosinophilic Gastrointestinal Disease",
+            [
+                "eosinophilic gastritis",
+                "eosinophilic gastroenteritis",
+                "eosinophilic colitis",
+                "eosinophilic gastrointestinal",
+                "egid",
+            ],
+        ),
+        (
+            "DRESS / Drug Hypersensitivity",
+            [
+                "dress",
+                "drug reaction with eosinophilia",
+                "drug hypersensitivity",
+                "drug-induced eosinophilia",
+                "drug induced eosinophilia",
+            ],
+        ),
+        (
+            "Dermatologic Eosinophilic Disorders",
+            [
+                "atopic dermatitis",
+                "wells syndrome",
+                "eosinophilic cellulitis",
+                "eosinophilic dermatosis",
+                "skin eosinophilia",
+            ],
+        ),
+        (
+            "Infectious / Parasitic Eosinophilia",
+            [
+                "parasite",
+                "parasitic",
+                "helminth",
+                "strongyloides",
+                "tropical eosinophilia",
+                "schistosomiasis",
+                "toxocara",
+            ],
+        ),
+        (
+            "Pediatric Eosinophilic Disorders",
+            [
+                "pediatric",
+                "paediatric",
+                "children",
+                "childhood",
+                "infant",
+            ],
+        ),
+        (
+            "Basic Science / Translational Eosinophil Biology",
+            [
+                "il-5",
+                "interleukin-5",
+                "eosinophil activation",
+                "cytokine",
+                "pathogenesis",
+                "pathophysiology",
+                "signaling",
+                "molecular",
+                "transcriptomic",
+                "genomic",
+            ],
+        ),
     ]
 
-    mechanism_keywords = [
-        "mechanism", "pathophysiology", "pathogenesis", "molecular",
-        "mutation", "mutations", "cytokine", "interleukin", "il-5",
-        "signaling", "pathway", "gene expression", "transcriptomic",
-        "genomic", "immune", "inflammation", "eosinophil activation"
-    ]
+    for category_name, keywords in categories:
+        if any(keyword in text for keyword in keywords):
+            return category_name
 
-    pathology_keywords = [
-        "pathology", "histology", "biopsy", "bone marrow", "marrow",
-        "immunophenotype", "flow cytometry", "cytogenetic", "cytogenetics",
-        "fish", "pcr", "morphology", "infiltration", "tissue eosinophilia"
-    ]
-
-    if any(keyword in text for keyword in clinical_keywords):
-        return "Clinical Practice"
-
-    if any(keyword in text for keyword in mechanism_keywords):
-        return "Mechanism / Pathophysiology"
-
-    if any(keyword in text for keyword in pathology_keywords):
-        return "Pathology / Diagnostic Findings"
-
-    return "Other / Unclassified"
+    return "Other Eosinophilic Disorders"
 
 
 def make_article_html(item):
@@ -65,7 +183,6 @@ def make_article_html(item):
         <h3><a href="{item["link"]}" target="_blank">{item["title"]}</a></h3>
         <p><strong>Journal:</strong> {item["journal"]}</p>
         <p><strong>Journal Score:</strong> {item["journal_score"]}</p>
-        <p><strong>Category:</strong> {item["category"]}</p>
         <p><strong>Publication Date:</strong> {item["publication_date"]}</p>
         <p><strong>PubMed Link:</strong> <a href="{item["link"]}" target="_blank">{item["link"]}</a></p>
         <p><strong>Abstract:</strong> {item["abstract"]}</p>
@@ -82,7 +199,7 @@ search_params = {
     "db": "pubmed",
     "term": '("hypereosinophilia" OR "hypereosinophilic syndrome" OR "eosinophilia" OR "eosinophilic leukemia") AND ("last 30 days"[dp])',
     "retmode": "json",
-    "retmax": 100
+    "retmax": 100,
 }
 
 search_response = requests.get(search_url, params=search_params)
@@ -99,7 +216,7 @@ if pmids:
     fetch_params = {
         "db": "pubmed",
         "id": ",".join(pmids),
-        "retmode": "xml"
+        "retmode": "xml",
     }
 
     fetch_response = requests.get(fetch_url, params=fetch_params)
@@ -120,74 +237,66 @@ if pmids:
         short_abstract = abstract[:700] + "..." if len(abstract) > 700 else abstract
 
         link = f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/"
-
         journal_score = journal_scores.get(journal.lower(), 0)
-        category = classify_article(title, abstract)
+        disease_category = assign_disease_category(title, abstract)
 
-        articles.append({
-            "title": title,
-            "journal": journal,
-            "publication_date": publication_date,
-            "pmid": pmid,
-            "link": link,
-            "abstract": short_abstract,
-            "journal_score": journal_score,
-            "category": category
-        })
+        articles.append(
+            {
+                "title": title,
+                "journal": journal,
+                "publication_date": publication_date,
+                "pmid": pmid,
+                "link": link,
+                "abstract": short_abstract,
+                "journal_score": journal_score,
+                "disease_category": disease_category,
+            }
+        )
 
 
-ranked_articles = [a for a in articles if a["journal_score"] > 0]
-unranked_articles = [a for a in articles if a["journal_score"] == 0]
-
-ranked_articles.sort(key=lambda x: x["journal_score"], reverse=True)
-
-clinical_articles = [a for a in unranked_articles if a["category"] == "Clinical Practice"]
-mechanism_articles = [a for a in unranked_articles if a["category"] == "Mechanism / Pathophysiology"]
-pathology_articles = [a for a in unranked_articles if a["category"] == "Pathology / Diagnostic Findings"]
-other_articles = [a for a in unranked_articles if a["category"] == "Other / Unclassified"]
+category_order = [
+    "Hypereosinophilic Syndrome / Hypereosinophilia",
+    "Eosinophilic Leukemia / Hematologic Neoplasms",
+    "EGPA / Churg-Strauss / Vasculitis",
+    "Asthma / Airway Disease",
+    "Chronic Rhinosinusitis / Nasal Polyps",
+    "Pulmonary Eosinophilic Disorders",
+    "Eosinophilic Esophagitis",
+    "Eosinophilic Gastrointestinal Disease",
+    "DRESS / Drug Hypersensitivity",
+    "Dermatologic Eosinophilic Disorders",
+    "Infectious / Parasitic Eosinophilia",
+    "Pediatric Eosinophilic Disorders",
+    "Basic Science / Translational Eosinophil Biology",
+    "Other Eosinophilic Disorders",
+]
 
 articles_html = ""
 
 if articles:
-    articles_html += "<h2>High-Ranked Journal Articles</h2>"
+    articles_html += """
+    <p>
+    Articles are grouped by disease area. Within each disease area,
+    articles are sorted by journal score, highest first.
+    </p>
+    """
 
-    if ranked_articles:
-        for item in ranked_articles:
-            articles_html += make_article_html(item)
-    else:
-        articles_html += "<p>No articles from ranked journals found.</p>"
+    for category in category_order:
+        category_articles = [
+            article for article in articles
+            if article["disease_category"] == category
+        ]
 
-    articles_html += "<h2>Unranked Articles: Clinical Practice</h2>"
+        category_articles.sort(
+            key=lambda x: x["journal_score"],
+            reverse=True
+        )
 
-    if clinical_articles:
-        for item in clinical_articles:
-            articles_html += make_article_html(item)
-    else:
-        articles_html += "<p>No clinical practice articles found among unranked journals.</p>"
+        if category_articles:
+            articles_html += f"<h2>{category}</h2>"
 
-    articles_html += "<h2>Unranked Articles: Mechanism / Pathophysiology</h2>"
-
-    if mechanism_articles:
-        for item in mechanism_articles:
-            articles_html += make_article_html(item)
-    else:
-        articles_html += "<p>No mechanism/pathophysiology articles found among unranked journals.</p>"
-
-    articles_html += "<h2>Unranked Articles: Pathology / Diagnostic Findings</h2>"
-
-    if pathology_articles:
-        for item in pathology_articles:
-            articles_html += make_article_html(item)
-    else:
-        articles_html += "<p>No pathology/diagnostic articles found among unranked journals.</p>"
-
-    articles_html += "<h2>Unranked Articles: Other / Unclassified</h2>"
-
-    if other_articles:
-        for item in other_articles:
-            articles_html += make_article_html(item)
-    else:
-        articles_html += "<p>No other unclassified articles found.</p>"
+            for item in category_articles:
+                articles_html += make_article_html(item)
 
 else:
     articles_html = "<p>No articles found in the prior 30 days.</p>"
@@ -203,11 +312,6 @@ html = f"""
     <p>Updated: {date.today()}</p>
     <p>Total citations found in prior 30 days: {total_found}</p>
 
-    <p>
-    Articles from journals in your ranking list are shown first.
-    Articles from unranked journals are grouped by topic using title and abstract keywords.
-    </p>
-
     {articles_html}
 </body>
 </html>
@@ -218,8 +322,10 @@ with open("index.html", "w", encoding="utf-8") as file:
 
 print("Website updated successfully: index.html")
 print("Total citations found:", total_found)
-print("Ranked articles:", len(ranked_articles))
-print("Unranked clinical articles:", len(clinical_articles))
-print("Unranked mechanism/pathophysiology articles:", len(mechanism_articles))
-print("Unranked pathology/diagnostic articles:", len(pathology_articles))
-print("Unranked other articles:", len(other_articles))
+
+for category in category_order:
+    count = len([
+        article for article in articles
+        if article["disease_category"] == category
+    ])
+    print(f"{category}: {count}")
