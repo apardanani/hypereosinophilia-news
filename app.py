@@ -273,18 +273,11 @@ def make_article_html(item):
 journal_scores = load_journal_scores()
 
 fda_links = {
+
     "Hypereosinophilic Syndrome / Hypereosinophilia":
         "https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=125526",
-
-    "EGPA / Churg-Strauss / Vasculitis":
-        "https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=125526",
-
-    "Asthma / Airway Disease":
-        "https://www.accessdata.fda.gov/scripts/cder/daf/",
-
-    "Eosinophilic Esophagitis":
-        "https://www.accessdata.fda.gov/scripts/cder/daf/",
 }
+
 
 
 search_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
