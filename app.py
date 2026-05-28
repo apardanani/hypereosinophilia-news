@@ -1,4 +1,5 @@
 import csv
+import re
 import requests
 from xml.etree import ElementTree
 from datetime import date
@@ -22,50 +23,29 @@ def load_journal_scores():
     return scores
 
 
+def contains_any(text, keywords):
+    for keyword in keywords:
+        pattern = r"\b" + re.escape(keyword.lower()) + r"\b"
+        if re.search(pattern, text):
+            return True
+    return False
+
+
 def assign_disease_category(title, abstract):
     text = f"{title} {abstract}".lower()
 
     categories = [
         (
-            "Hypereosinophilic Syndrome / Hypereosinophilia",
-            [
-                "hypereosinophilic syndrome",
-                "hypereosinophilia",
-                "hypereosinophilic",
-                "idiopathic hypereosinophilic",
-                "hes",
-            ],
-        ),
-        (
             "EGPA / Churg-Strauss / Vasculitis",
             [
-                "eosinophilic granulomatosis with polyangiitis",
                 "egpa",
+                "anca",
+                "vasculitis",
                 "churg-strauss",
                 "churg strauss",
-                "anca",
+                "eosinophilic granulomatosis with polyangiitis",
                 "anca-associated vasculitis",
-                "vasculitis",
-                "eosinophilic vasculitis",
-                "small vessel vasculitis",
                 "polyangiitis",
-                "granulomatosis",
-                "mepolizumab in egpa",
-            ],
-        ),
-        (
-            "Eosinophilic Leukemia / Hematologic Neoplasms",
-            [
-                "eosinophilic leukemia",
-                "chronic eosinophilic leukemia",
-                "cel",
-                "myeloid/lymphoid neoplasm",
-                "myeloid lymphoid neoplasm",
-                "pdgfra",
-                "pdgfrb",
-                "fgfr1",
-                "pcm1-jak2",
-                "systemic mastocytosis",
             ],
         ),
         (
@@ -73,10 +53,6 @@ def assign_disease_category(title, abstract):
             [
                 "infection",
                 "infectious",
-                "parasite",
-                "parasitic",
-                "helminth",
-                "helminthic",
                 "strongyloides",
                 "strongyloidiasis",
                 "toxocara",
@@ -93,6 +69,10 @@ def assign_disease_category(title, abstract):
                 "ankylostomiasis",
                 "ancylostomiasis",
                 "hookworm",
+                "parasite",
+                "parasitic",
+                "helminth",
+                "helminthic",
                 "schistosomiasis",
                 "schistosoma",
                 "fasciola",
@@ -109,6 +89,29 @@ def assign_disease_category(title, abstract):
                 "aspergillus",
                 "coccidioides",
                 "histoplasma",
+            ],
+        ),
+        (
+            "Eosinophilic Leukemia / Hematologic Neoplasms",
+            [
+                "eosinophilic leukemia",
+                "chronic eosinophilic leukemia",
+                "pdgfra",
+                "pdgfrb",
+                "fgfr1",
+                "pcm1-jak2",
+                "myeloid/lymphoid",
+                "myeloid lymphoid",
+                "systemic mastocytosis",
+            ],
+        ),
+        (
+            "Hypereosinophilic Syndrome / Hypereosinophilia",
+            [
+                "hypereosinophilic syndrome",
+                "hypereosinophilia",
+                "hypereosinophilic",
+                "idiopathic hypereosinophilic",
             ],
         ),
         (
@@ -129,7 +132,6 @@ def assign_disease_category(title, abstract):
                 "nasal polyp",
                 "nasal polyps",
                 "crswnp",
-                "crswnp",
                 "eosinophilic chronic rhinosinusitis",
             ],
         ),
@@ -138,8 +140,8 @@ def assign_disease_category(title, abstract):
             [
                 "pulmonary eosinophilia",
                 "eosinophilic pneumonia",
-                "allergic bronchopulmonary aspergillosis",
                 "abpa",
+                "allergic bronchopulmonary aspergillosis",
                 "lung eosinophilia",
             ],
         ),
@@ -210,7 +212,7 @@ def assign_disease_category(title, abstract):
     ]
 
     for category_name, keywords in categories:
-        if any(keyword in text for keyword in keywords):
+        if contains_any(text, keywords):
             return category_name
 
     return "Other Eosinophilic Disorders"
@@ -294,10 +296,10 @@ if pmids:
 
 
 category_order = [
-    "Hypereosinophilic Syndrome / Hypereosinophilia",
     "EGPA / Churg-Strauss / Vasculitis",
-    "Eosinophilic Leukemia / Hematologic Neoplasms",
     "Infectious / Parasitic Eosinophilia",
+    "Eosinophilic Leukemia / Hematologic Neoplasms",
+    "Hypereosinophilic Syndrome / Hypereosinophilia",
     "Asthma / Airway Disease",
     "Chronic Rhinosinusitis / Nasal Polyps",
     "Pulmonary Eosinophilic Disorders",
