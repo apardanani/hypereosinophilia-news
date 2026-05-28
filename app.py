@@ -1,6 +1,26 @@
+import csv
 import requests
 from xml.etree import ElementTree
 from datetime import date
+
+def load_journal_scores():
+    scores = {}
+
+    try:
+        with open("journal_scores.csv", "r", encoding="utf-8") as file:
+            reader = csv.DictReader(file)
+
+            for row in reader:
+                journal = row["journal"].strip().lower()
+                score = float(row["score"])
+                scores[journal] = score
+
+    except FileNotFoundError:
+        print("journal_scores.csv not found. Using default score of 0.")
+
+    return scores
+
+journal_scores = load_journal_scores()
 
 search_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
 
@@ -17,7 +37,7 @@ search_data = search_response.json()
 pmids = search_data["esearchresult"]["idlist"]
 total_found = search_data["esearchresult"]["count"]
 
-articles_html = ""
+articles = []
 
 if pmids:
     fetch_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
@@ -47,13 +67,32 @@ if pmids:
 
         link = f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/"
 
+        journal_score = journal_scores.get(journal.lower(), 0)
+
+        articles.append({
+            "title": title,
+            "journal": journal,
+            "publication_date": publication_date,
+            "pmid": pmid,
+            "link": link,
+            "abstract": short_abstract,
+            "journal_score": journal_score
+        })
+
+articles.sort(key=lambda x: x["journal_score"], reverse=True)
+
+articles_html = ""
+
+if articles:
+    for item in articles:
         articles_html += f"""
         <article>
-            <h2><a href="{link}" target="_blank">{title}</a></h2>
-            <p><strong>Journal:</strong> {journal}</p>
-            <p><strong>Publication Date:</strong> {publication_date}</p>
-            <p><strong>PubMed Link:</strong> <a href="{link}" target="_blank">{link}</a></p>
-            <p><strong>Abstract:</strong> {short_abstract}</p>
+            <h2><a href="{item["link"]}" target="_blank">{item["title"]}</a></h2>
+            <p><strong>Journal:</strong> {item["journal"]}</p>
+            <p><strong>Journal Score:</strong> {item["journal_score"]}</p>
+            <p><strong>Publication Date:</strong> {item["publication_date"]}</p>
+            <p><strong>PubMed Link:</strong> <a href="{item["link"]}" target="_blank">{item["link"]}</a></p>
+            <p><strong>Abstract:</strong> {item["abstract"]}</p>
         </article>
         <hr>
         """
@@ -69,6 +108,7 @@ html = f"""
     <h1>Hypereosinophilia Research Updates</h1>
     <p>Updated: {date.today()}</p>
     <p>Total citations found in prior 30 days: {total_found}</p>
+    <p>Articles are ranked by journal score, highest first.</p>
 
     {articles_html}
 </body>
@@ -80,3 +120,4 @@ with open("index.html", "w", encoding="utf-8") as file:
 
 print("Website updated successfully: index.html")
 print("Total citations found:", total_found)
+print("Articles ranked by journal score.")
