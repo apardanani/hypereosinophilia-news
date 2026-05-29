@@ -80,86 +80,6 @@ def get_news_feed():
 
     return news_items
 
-def get_clinical_trials():
-
-    search_terms = [
-        "hypereosinophilic syndrome",
-        "hypereosinophilia",
-        "eosinophilia",
-        "eosinophilic leukemia",
-        "egpa",
-        "eosinophilic granulomatosis with polyangiitis",
-    ]
-
-    trials = []
-    seen_nct = set()
-
-    for term in search_terms:
-
-        url = "https://clinicaltrials.gov/api/v2/studies"
-
-        params = {
-            "query.term": term,
-            "pageSize": 20,
-            "format": "json",
-        }
-
-        response = requests.get(url, params=params)
-
-        print("ClinicalTrials.gov search:", term, response.status_code)
-
-        if response.status_code != 200:
-            continue
-
-        data = response.json()
-
-        studies = data.get("studies", [])
-
-        print("Trials found for", term, ":", len(studies))
-
-        for study in studies:
-
-            protocol = study.get("protocolSection", {})
-
-            identification = protocol.get("identificationModule", {})
-            status_module = protocol.get("statusModule", {})
-            design_module = protocol.get("designModule", {})
-            conditions_module = protocol.get("conditionsModule", {})
-            sponsor_module = protocol.get("sponsorCollaboratorsModule", {})
-
-            nct = identification.get("nctId", "")
-
-            if not nct or nct in seen_nct:
-                continue
-
-            seen_nct.add(nct)
-
-            title = identification.get("briefTitle", "No title")
-
-            status = status_module.get("overallStatus", "Unknown")
-
-            phases = design_module.get("phases", [])
-            phase = ", ".join(phases) if phases else "Not specified"
-
-            conditions = conditions_module.get("conditions", [])
-            condition = ", ".join(conditions) if conditions else "Not specified"
-
-            sponsor_info = sponsor_module.get("leadSponsor", {})
-            sponsor = sponsor_info.get("name", "Unknown")
-
-            trials.append({
-                "title": title,
-                "status": status,
-                "phase": phase,
-                "condition": condition,
-                "sponsor": sponsor,
-                "nct": nct,
-                "link": f"https://clinicaltrials.gov/study/{nct}",
-            })
-
-    print("Total unique clinical trials found:", len(trials))
-
-    return trials
 
 def assign_disease_category(title, abstract):
     text = f"{title} {abstract}".lower()
@@ -407,74 +327,12 @@ if articles:
     articles_html += """
     </ul>
     """
-clinical_trials = get_clinical_trials()
 
-articles_html += """
-<h2>Clinical Trials</h2>
-
-<p>
-Recent clinical trials related to
-hypereosinophilia and eosinophilic disorders.
-</p>
-
-<ul>
-"""
-
-if clinical_trials:
-
-    for trial in clinical_trials:
-
-        articles_html += f"""
-        <li>
-
-        <strong>
-        <a href="{trial['link']}"
-           target="_blank">
-           {trial['title']}
-        </a>
-        </strong>
-
-        <br>
-
-        Status:
-        {trial['status']}
-
-        <br>
-
-        Phase:
-        {trial['phase']}
-
-        <br>
-
-        Sponsor:
-        {trial['sponsor']}
-
-        <br>
-
-        NCT:
-        {trial['nct']}
-
-        </li>
-
-        <br>
-        """
-
-else:
+    news_items = get_news_feed()
+    print("News items found:", len(news_items))
 
     articles_html += """
-    <li>
-    No clinical trials found.
-    </li>
-    """
-
-articles_html += "</ul>"
-
-
-news_items = get_news_feed()
-print("News items found:", len(news_items))
-
-articles_html += """
-<h2>Industry / Regulatory Updates</h2>
+    <h2>Industry / Regulatory Updates</h2>
     <p>
     Recent news items related to hypereosinophilia,
     hypereosinophilic syndrome, and eosinophilia.
@@ -482,7 +340,7 @@ articles_html += """
     <ul>
     """
 
-if news_items:
+    if news_items:
         for item in news_items:
             articles_html += f"""
             <li>
@@ -492,10 +350,10 @@ if news_items:
                 <small>{item["published"]}</small>
             </li>
             """
-else:
+    else:
         articles_html += "<li>No recent news items found.</li>"
 
-articles_html += """
+    articles_html += """
     </ul>
 
     <p>
@@ -504,7 +362,7 @@ articles_html += """
     </p>
     """
 
-for category in category_order:
+    for category in category_order:
         category_articles = [
             article for article in articles
             if article["disease_category"] == category
