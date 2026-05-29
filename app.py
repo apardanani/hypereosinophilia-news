@@ -44,26 +44,16 @@ def category_to_id(category):
 
 
 def get_news_feed():
-
     search_terms = [
-
-        "benralizumab hypereosinophilic syndrome hypereosinophilia eosinophilia",
-
-        "mepolizumab hypereosinophilic syndrome hypereosinophilia eosinophilia",
-
-        "FDA hypereosinophilic syndrome hypereosinophilia eosinophilia",
-
-        "hypereosinophilic syndrome hypereosinophilia eosinophilia clinical trial",
-
-        "hypereosinophilic syndrome hypereosinophilia eosinophilia biotech",
+        "hypereosinophilia",
+        "hypereosinophilic syndrome",
+        "eosinophilia",
     ]
 
     news_items = []
-
     seen_titles = set()
 
     for term in search_terms:
-
         query = quote(term)
 
         rss_url = (
@@ -74,10 +64,8 @@ def get_news_feed():
         feed = feedparser.parse(rss_url)
 
         for entry in feed.entries[:5]:
-
             title = entry.get("title", "No title")
 
-            # Remove duplicates
             if title in seen_titles:
                 continue
 
@@ -87,10 +75,7 @@ def get_news_feed():
                 "term": term,
                 "title": title,
                 "link": entry.get("link", ""),
-                "published": entry.get(
-                    "published",
-                    "Date not available"
-                ),
+                "published": entry.get("published", "Date not available"),
             })
 
     return news_items
