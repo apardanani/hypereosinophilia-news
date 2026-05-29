@@ -486,7 +486,7 @@ news_items = get_news_feed()
 print("News items found:", len(news_items))
 
 articles_html += """
-<h2>Industry / Regulatory Updates</h2>
+<h2>Eosinophilia News & Updates</h2>
 <p>
 Recent news items related to hypereosinophilia,
 hypereosinophilic syndrome, and eosinophilia.
