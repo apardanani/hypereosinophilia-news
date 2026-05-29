@@ -320,6 +320,7 @@ if articles:
     """
 
     news_items = get_news_feed()
+    print("News items found:", len(news_items))
 
     articles_html += """
     <h2>News Feed</h2>
