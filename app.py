@@ -369,148 +369,122 @@ category_order = [
 
 articles_html = ""
 
-if articles:
-    articles_html += """
-    <h2>Topics</h2>
-    <ul>
-    """
+articles_html += """
+<h2>Topics</h2>
+<ul>
+"""
 
-    for category in category_order:
-        category_articles = [
-            article for article in articles
-            if article["disease_category"] == category
-        ]
+for category in category_order:
+    category_articles = [
+        article for article in articles
+        if article["disease_category"] == category
+    ]
 
-        if category_articles:
-            category_id = category_to_id(category)
+    if category_articles:
+        category_id = category_to_id(category)
 
-            articles_html += f"""
-            <li>
-                <a href="#{category_id}">{category}</a>
-                ({len(category_articles)})
-            """
+        articles_html += f"""
+        <li>
+            <a href="#{category_id}">{category}</a>
+            ({len(category_articles)})
+        """
 
-            if category in fda_medications:
-                articles_html += " — FDA-approved medications: "
+        if category in fda_medications:
+            articles_html += " — FDA-approved medications: "
 
-                medication_links = []
+            medication_links = []
 
-                for med_name, med_link in fda_medications[category]:
-                    medication_links.append(
-                        f'<a href="{med_link}" target="_blank">{med_name}</a>'
-                    )
+            for med_name, med_link in fda_medications[category]:
+                medication_links.append(
+                    f'<a href="{med_link}" target="_blank">{med_name}</a>'
+                )
 
-                articles_html += ", ".join(medication_links)
+            articles_html += ", ".join(medication_links)
 
-            articles_html += "</li>"
+        articles_html += "</li>"
 
-    articles_html += """
-    </ul>
-    """
+articles_html += """
+</ul>
+"""
+
 clinical_trials = get_clinical_trials()
 
 articles_html += """
 <h2>Clinical Trials</h2>
-
-<p>
-Recent clinical trials related to
-hypereosinophilia and eosinophilic disorders.
-</p>
-
+<p>Clinical trials related to hypereosinophilia and eosinophilic disorders.</p>
 <ul>
 """
 
 if clinical_trials:
-
     for trial in clinical_trials:
-
         articles_html += f"""
         <li>
-
-        <strong>
-        <a href="{trial['link']}"
-           target="_blank">
-           {trial['title']}
-        </a>
-        </strong>
-
-        <br>
-
-        Status:
-        {trial['status']}
-
-        <br>
-
-        Phase:
-        {trial['phase']}
-
-        <br>
-
-        Sponsor:
-        {trial['sponsor']}
-
-        <br>
-
-        NCT:
-        {trial['nct']}
-
+            <strong>
+                <a href="{trial['link']}" target="_blank">
+                    {trial['title']}
+                </a>
+            </strong>
+            <br>
+            Status: {trial['status']}
+            <br>
+            Phase: {trial['phase']}
+            <br>
+            Sponsor: {trial['sponsor']}
+            <br>
+            NCT: {trial['nct']}
         </li>
-
         <br>
         """
-
 else:
-
-    articles_html += """
-    <li>
-    No clinical trials found.
-    </li>
-    """
+    articles_html += "<li>No clinical trials found.</li>"
 
 articles_html += "</ul>"
-
 
 news_items = get_news_feed()
 print("News items found:", len(news_items))
 
 articles_html += """
 <h2>Industry / Regulatory Updates</h2>
-    <p>
-    Recent news items related to hypereosinophilia,
-    hypereosinophilic syndrome, and eosinophilia.
-    </p>
-    <ul>
-    """
+<p>
+Recent news items related to hypereosinophilia,
+hypereosinophilic syndrome, and eosinophilia.
+</p>
+<ul>
+"""
 
 if news_items:
-        for item in news_items:
-            articles_html += f"""
-            <li>
-                <strong>{item["term"]}:</strong>
-                <a href="{item["link"]}" target="_blank">{item["title"]}</a>
-                <br>
-                <small>{item["published"]}</small>
-            </li>
-            """
+    for item in news_items:
+        articles_html += f"""
+        <li>
+            <strong>{item["term"]}:</strong>
+            <a href="{item["link"]}" target="_blank">{item["title"]}</a>
+            <br>
+            <small>{item["published"]}</small>
+        </li>
+        """
 else:
-        articles_html += "<li>No recent news items found.</li>"
+    articles_html += "<li>No recent news items found.</li>"
 
 articles_html += """
-    </ul>
+</ul>
 
-    <p>
-    Articles are grouped by disease area. Within each disease area,
-    articles are sorted by journal score, highest first.
-    </p>
-    """
+<p>
+Articles are grouped by disease area. Within each disease area,
+articles are sorted by journal score, highest first.
+</p>
+"""
 
-for category in category_order:
+if articles:
+    for category in category_order:
         category_articles = [
             article for article in articles
             if article["disease_category"] == category
         ]
 
-        category_articles.sort(key=lambda x: x["journal_score"], reverse=True)
+        category_articles.sort(
+            key=lambda x: x["journal_score"],
+            reverse=True
+        )
 
         if category_articles:
             category_id = category_to_id(category)
@@ -522,9 +496,8 @@ for category in category_order:
 
             for item in category_articles:
                 articles_html += make_article_html(item)
-
 else:
-    articles_html = "<p>No articles found in the prior 30 days.</p>"
+    articles_html += "<p>No PubMed articles found in the prior 30 days.</p>"
 
 
 html = f"""
