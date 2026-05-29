@@ -542,6 +542,7 @@ else:
     articles_html += "<p>No PubMed articles found in the prior 30 days.</p>"
 
 
+
 html = f"""
 <html>
 
@@ -595,7 +596,7 @@ html = f"""
 
         <div class="header-image">
 
-            <img src="eosinophil.png"
+            <img src="images/eosinophil.png"
                  alt="Eosinophil">
 
         </div>
