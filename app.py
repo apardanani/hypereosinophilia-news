@@ -83,9 +83,9 @@ def get_news_feed():
 def get_clinical_trials():
 
     search_terms = [
-    "hypereosinophilic syndrome",
-    "hypereosinophilia",
-]
+        "hypereosinophilic syndrome",
+        "hypereosinophilia",
+    ]
 
     trials = []
     seen_nct = set()
@@ -128,20 +128,62 @@ def get_clinical_trials():
             if not nct or nct in seen_nct:
                 continue
 
-            seen_nct.add(nct)
+            title = identification.get(
+                "briefTitle",
+                "No title"
+            )
 
-            title = identification.get("briefTitle", "No title")
-
-            status = status_module.get("overallStatus", "Unknown")
+            status = status_module.get(
+                "overallStatus",
+                "Unknown"
+            )
 
             phases = design_module.get("phases", [])
-            phase = ", ".join(phases) if phases else "Not specified"
 
-            conditions = conditions_module.get("conditions", [])
-            condition = ", ".join(conditions) if conditions else "Not specified"
+            phase = (
+                ", ".join(phases)
+                if phases
+                else "Not specified"
+            )
 
-            sponsor_info = sponsor_module.get("leadSponsor", {})
-            sponsor = sponsor_info.get("name", "Unknown")
+            conditions = conditions_module.get(
+                "conditions",
+                []
+            )
+
+            condition = (
+                ", ".join(conditions)
+                if conditions
+                else "Not specified"
+            )
+
+            trial_text = (
+                f"{title} {condition}"
+            ).lower()
+
+            keep_terms = [
+                "hypereosinophilic syndrome",
+                "hypereosinophilia",
+                "hypereosinophilic",
+            ]
+
+            if not any(
+                term in trial_text
+                for term in keep_terms
+            ):
+                continue
+
+            seen_nct.add(nct)
+
+            sponsor_info = sponsor_module.get(
+                "leadSponsor",
+                {}
+            )
+
+            sponsor = sponsor_info.get(
+                "name",
+                "Unknown"
+            )
 
             trials.append({
                 "title": title,
@@ -150,10 +192,14 @@ def get_clinical_trials():
                 "condition": condition,
                 "sponsor": sponsor,
                 "nct": nct,
-                "link": f"https://clinicaltrials.gov/study/{nct}",
+                "link":
+                    f"https://clinicaltrials.gov/study/{nct}",
             })
 
-    print("Total unique clinical trials found:", len(trials))
+    print(
+        "Total unique clinical trials found:",
+        len(trials)
+    )
 
     return trials
 
