@@ -544,19 +544,68 @@ else:
 
 html = f"""
 <html>
+
 <head>
     <title>Hypereosinophilia Research Updates</title>
+
+    <style>
+
+    body {{
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }}
+
+    .header {{
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }}
+
+    .header-text {{
+        max-width: 75%;
+    }}
+
+    .header-image img {{
+        width: 300px;
+        border-radius: 10px;
+    }}
+
+    </style>
+
 </head>
 
 <body id="top">
-    <h1>Hypereosinophilia Research Updates</h1>
 
-    <p>Updated: {date.today()}</p>
+    <div class="header">
 
-    <p>Total citations found in prior 30 days: {total_found}</p>
+        <div class="header-text">
+
+            <h1>Hypereosinophilia Research Updates</h1>
+
+            <p>
+                Updated: {date.today()}
+            </p>
+
+            <p>
+                Total citations found in prior 30 days:
+                {total_found}
+            </p>
+
+        </div>
+
+        <div class="header-image">
+
+            <img src="eosinophil.png"
+                 alt="Eosinophil">
+
+        </div>
+
+    </div>
 
     {articles_html}
+
 </body>
+
 </html>
 """
 
