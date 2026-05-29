@@ -44,16 +44,28 @@ def category_to_id(category):
 
 
 def get_news_feed():
+
     search_terms = [
-        "hypereosinophilia",
-        "hypereosinophilic syndrome",
-        "eosinophilia",
+
+        "benralizumab hypereosinophilic syndrome hypereosinophilia eosinophilia",
+
+        "mepolizumab hypereosinophilic syndrome hypereosinophilia eosinophilia",
+
+        "FDA hypereosinophilic syndrome hypereosinophilia eosinophilia",
+
+        "hypereosinophilic syndrome hypereosinophilia eosinophilia clinical trial",
+
+        "hypereosinophilic syndrome hypereosinophilia eosinophilia biotech",
     ]
 
     news_items = []
 
+    seen_titles = set()
+
     for term in search_terms:
+
         query = quote(term)
+
         rss_url = (
             f"https://news.google.com/rss/search?"
             f"q={query}&hl=en-US&gl=US&ceid=US:en"
@@ -62,11 +74,23 @@ def get_news_feed():
         feed = feedparser.parse(rss_url)
 
         for entry in feed.entries[:5]:
+
+            title = entry.get("title", "No title")
+
+            # Remove duplicates
+            if title in seen_titles:
+                continue
+
+            seen_titles.add(title)
+
             news_items.append({
                 "term": term,
-                "title": entry.get("title", "No title"),
+                "title": title,
                 "link": entry.get("link", ""),
-                "published": entry.get("published", "Date not available"),
+                "published": entry.get(
+                    "published",
+                    "Date not available"
+                ),
             })
 
     return news_items
@@ -323,7 +347,7 @@ if articles:
     print("News items found:", len(news_items))
 
     articles_html += """
-    <h2>News Feed</h2>
+    <h2>Industry / Regulatory Updates</h2>
     <p>
     Recent news items related to hypereosinophilia,
     hypereosinophilic syndrome, and eosinophilia.
