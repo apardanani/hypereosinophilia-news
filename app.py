@@ -83,13 +83,9 @@ def get_news_feed():
 def get_clinical_trials():
 
     search_terms = [
-        "hypereosinophilic syndrome",
-        "hypereosinophilia",
-        "eosinophilia",
-        "eosinophilic leukemia",
-        "egpa",
-        "eosinophilic granulomatosis with polyangiitis",
-    ]
+    "hypereosinophilic syndrome",
+    "hypereosinophilia",
+]
 
     trials = []
     seen_nct = set()
