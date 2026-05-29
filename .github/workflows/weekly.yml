@@ -22,8 +22,8 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install requests
-        run: pip install requests
+      - name: Install packages
+        run: pip install requests feedparser
 
       - name: Run PubMed updater
         run: python app.py
