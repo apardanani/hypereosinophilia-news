@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://apardanani.github.io/hypereosinophilia-news/sitemap.xml
