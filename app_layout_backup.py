@@ -552,59 +552,28 @@ html = f"""
     <meta name="description"
       content="Automated updates on hypereosinophilia, hypereosinophilic syndrome, eosinophilic leukemia, EGPA, eosinophilic disorders, clinical trials, FDA approvals, and recent scientific literature.">
     <style>
-body {{
-    font-family: Arial, sans-serif;
-    margin: 30px;
-    line-height: 1.4;
-}}
 
-.header {{
-    display: flex;
-    gap: 30px;
-    align-items: flex-start;
-    margin-bottom: 30px;
-}}
+    body {{
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }}
 
-.header-text {{
-    flex: 1;
-    max-width: 560px;
-}}
-
-.header-image img {{
-    width: 420px;
-    max-width: 100%;
-    border-radius: 10px;
-}}
-
-.beta-banner {{
-    background-color: #fff3cd;
-    border: 1px solid #ffeeba;
-    padding: 10px;
-    border-radius: 6px;
-    font-size: 15px;
-    margin: 15px 0;
-}}
-
-.main-content {{
-    width: 100%;
-    max-width: 1100px;
-}}
-
-article {{
-    margin-bottom: 25px;
-}}
-
-@media (max-width: 900px) {{
     .header {{
-        flex-direction: column;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }}
+
+    .header-text {{
+        max-width: 75%;
     }}
 
     .header-image img {{
-        width: 100%;
-        max-width: 420px;
+        width: 300px;
+        border-radius: 10px;
     }}
-}}
-</style>
+
+    </style>
 
 </head>
 
@@ -616,12 +585,18 @@ article {{
     <div class="header">
 
         <div class="header-text">
-        <div class="beta-banner">
-        Beta version: This site is under active development and intended for evaluation purposes.
-        </div>
 
     <h1>Hypereosinophilia Research Updates</h1>
 
+    <p style="
+        background-color:#fff3cd;
+        border:1px solid #ffeeba;
+        padding:8px;
+        border-radius:6px;
+        font-size:14px;
+    ">
+        Beta version: This site is under active development and intended for evaluation purposes.
+    </p>
 
     <p>
         This site provides automated updates on hypereosinophilia,
@@ -649,11 +624,9 @@ article {{
 
         </div>
 
-        </div>
-
-    <div class="main-content">
-        {articles_html}
     </div>
+
+    {articles_html}
 
 </body>
 
