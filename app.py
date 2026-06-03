@@ -549,6 +549,8 @@ html = f"""
 <head>
     <title>Hypereosinophilia Research Updates</title>
 
+    <meta name="description"
+      content="Automated updates on hypereosinophilia, hypereosinophilic syndrome, eosinophilic leukemia, EGPA, eosinophilic disorders, clinical trials, FDA approvals, and recent scientific literature.">
     <style>
 
     body {{
