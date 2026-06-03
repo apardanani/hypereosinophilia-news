@@ -583,18 +583,28 @@ html = f"""
 
         <div class="header-text">
 
-            <h1>Hypereosinophilia Research Updates</h1>
+    <h1>
+        Hypereosinophilia Research Updates
+    </h1>
 
-            <p>
-                Updated: {date.today()}
-            </p>
+    <p>
+        This site provides automated updates on hypereosinophilia,
+        hypereosinophilic syndrome (HES), eosinophilic leukemia,
+        EGPA (Churg-Strauss syndrome), eosinophilic disorders,
+        clinical trials, FDA-approved therapies, and recent
+        scientific literature.
+    </p>
 
-            <p>
-                Total citations found in prior 30 days:
-                {total_found}
-            </p>
+    <p>
+        Updated: {date.today()}
+    </p>
 
-        </div>
+    <p>
+        Total citations found in prior 30 days:
+        {total_found}
+    </p>
+
+    </div>
 
         <div class="header-image">
 
